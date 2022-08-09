@@ -169,8 +169,7 @@ const wait = async ({uuid, username, password, verbose}) => {
         args.push("--verbose");
     }
 
-    let status = "in progress";
-    while (status == "in progress") {
+    while (true) {
         let xcrun = execa("xcrun", args, {reject: false});
 
         if (verbose == true) {
@@ -206,19 +205,15 @@ const wait = async ({uuid, username, password, verbose}) => {
         const notarizationInfo = response["notarization-info"];
         switch (notarizationInfo["Status"]) {
             case "in progress":
-                status = "in progress";
                 core.info(`Notarization status <in progress>`);
                 break;
             case "invalid":
-                status = "invalid";
                 core.error(`Notarization status <invalid> - ${notarizationInfo["Status Message"]}`);
                 return false;
             case "success":
-                status = "success";
                 core.info(`Notarization status <success>`);
                 return true;
             default:
-                status = "unknown";
                 core.error(`Notarization status <${notarizationInfo["Status"]}> - TODO`);
                 return false;
         }
